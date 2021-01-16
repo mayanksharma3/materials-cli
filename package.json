@@ -1,6 +1,6 @@
 {
   "name": "materials-cli",
-  "version": "1.0.19",
+  "version": "1.0.21",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
   "repository": {
@@ -11,6 +11,7 @@
     "materials": "./dist/index.js"
   },
   "scripts": {
+    "build": "tsc",
     "start": "tsc && ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -19,7 +19,7 @@ const pkg = require('../package.json');
 const notifier = updateNotifier({pkg, updateCheckInterval: 0});
 
 const run = async () => {
-    startUp()
+    startUp(pkg.version)
     notifier.notify();
 
     const conf = new Configstore(id);
