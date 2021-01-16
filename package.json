@@ -1,6 +1,6 @@
 {
   "name": "materials-cli",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
   "repository": {
