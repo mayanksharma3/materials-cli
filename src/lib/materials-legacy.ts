@@ -4,6 +4,7 @@ import {legacyBaseURL} from "../utils/config";
 import axios from "axios";
 import * as fs from "fs";
 import {Resource} from "../utils/resource";
+import * as path from "path";
 
 class MaterialsLegacy {
 
@@ -14,8 +15,9 @@ class MaterialsLegacy {
     }
 
     async downloadFile(resource: Resource, index: number, folderPath: string, courseName: string) {
-        fs.mkdirSync(folderPath + "/" + courseName + "/" +  resource.category, {recursive: true});
-        let filePath = folderPath + "/" + courseName + "/" +  resource.category + "/" + resource.title;
+        const fullFolderPath = path.join(folderPath, courseName, resource.category);
+        fs.mkdirSync(fullFolderPath, {recursive: true});
+        const filePath = path.join(folderPath, courseName, resource.category, resource.title)
         if (!fs.existsSync(filePath)) {
             const encodedCategory = encodeURIComponent(resource.category)
             return axios.get(`https://materials.doc.ic.ac.uk/view/${resource.year}/${resource.course}/${encodedCategory}/${index}`, {
