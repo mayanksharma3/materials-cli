@@ -5,6 +5,12 @@ export interface Credentials {
     password: string;
 }
 
+export interface CredentialsAndToken {
+    token: string;
+    username: string;
+    password: string;
+}
+
 export type Token = string;
 export type Cookie = string;
 

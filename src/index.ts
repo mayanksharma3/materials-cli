@@ -1,6 +1,6 @@
+#!/usr/bin/env node
+
 import {askCredentials, pickCourse, setFolder} from "./lib/inquirer";
-import clear from "clear";
-import keytar from "keytar";
 import Configstore from "configstore";
 import MaterialsApi, {testAuth} from "./lib/materials-api";
 import {startUp} from "./utils/startup";
@@ -9,7 +9,6 @@ import chalk from "chalk";
 import {Resource} from "./utils/resource";
 import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
 import {id} from "./utils/config";
-import {deleteCredentials} from "./utils/credentials";
 
 const run = async () => {
     startUp()
@@ -17,32 +16,16 @@ const run = async () => {
     const conf = new Configstore(id);
 
     if (process.argv.includes("clean")) {
-        await deleteCredentials()
         conf.clear()
         console.log(chalk.greenBright("Configuration cleared!"))
         return;
     }
 
-
-    let existingCredentials = await keytar.findCredentials(id)
-
-    let token = ""
-    if (existingCredentials.length == 0) {
-        token = await askCredentials();
-    } else {
-        const existingCredential = {username: existingCredentials[0].account, password: existingCredentials[0].password}
-        const test = await testAuth(existingCredential)
-        if (!test) {
-            token = await askCredentials()
-        } else {
-            token = test
-        }
-    }
-    existingCredentials = await keytar.findCredentials(id)
+    let credentialsAndToken = await askCredentials();
 
     const cookie = await authLegacy({
-        username: existingCredentials[0].account,
-        password: existingCredentials[0].password
+        username: credentialsAndToken.username,
+        password: credentialsAndToken.password
     })
     const materialsLegacy = new MaterialsLegacy(cookie)
 
@@ -52,7 +35,7 @@ const run = async () => {
     }
 
     // token found
-    const materialsAPI = new MaterialsApi(token)
+    const materialsAPI = new MaterialsApi(credentialsAndToken.token)
 
     const courses = await materialsAPI.getCourses()
     const courseNameChosen = await pickCourse(courses.data as Course[])
