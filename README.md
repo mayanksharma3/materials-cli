@@ -24,7 +24,6 @@ The package [keytar](https://www.npmjs.com/package/keytar) is used for this.
 
 To clear configuration just type: `materials clean`
 
-
 ## TODO
 
 Currently, this uses a mix of the current materials page (https://materials.doc.ic.ac.uk) and the new API (https://materials-api.doc.ic.ac.uk).
@@ -34,5 +33,7 @@ The new API is slow to fetch resources, and the `/file` endpoint doesn't seem to
 When the new API is ready to serve files, the legacy method should be removed.
 
 1. Remove old API method using session cookies
-2. Add "favourite" courses to pull all latest content from all subscribed courses
-3. Find way to schedule pulling of files in the mornings
+2. Auto-calculate year (currently hardcoded to `2021`)
+3. Add "favourite" courses to pull all latest content from all subscribed courses
+4. Find way to schedule pulling of files in the mornings
+5. Test on Linux and Windows (paths will need to be updated for Windows)
