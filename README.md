@@ -4,6 +4,8 @@ CLI for Imperial's Department of Computing Materials Page.
 
 Pulls all the latest resources from your course into your folder, pulling only the ones you haven't got in your folder.
 
+![CLI demo](media/demo.gif)
+
 ## Installation
 
 `npm install -g materials-cli`
