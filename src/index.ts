@@ -11,6 +11,7 @@ import {Resource} from "./utils/resource";
 import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
 import {id} from "./utils/config";
 import {deleteCredentials} from "./utils/credentials";
+import ora from "ora";
 
 const run = async () => {
     startUp()
@@ -31,6 +32,7 @@ const run = async () => {
     if (existingCredentials.length == 0) {
         token = await askCredentials();
     } else {
+        const spinner = ora('Signing into Materials...').start();
         const existingCredential = {username: existingCredentials[0].account, password: existingCredentials[0].password}
         const test = await testAuth(existingCredential)
         if (!test) {
@@ -38,6 +40,9 @@ const run = async () => {
         } else {
             token = test
         }
+        spinner.stop()
+        spinner.clear()
+        console.log(chalk.greenBright("✔ Successfully authenticated"))
     }
     existingCredentials = await keytar.findCredentials(id)
 
@@ -52,15 +57,18 @@ const run = async () => {
         conf.set("folderPath", folderPath)
     }
 
-    // token found
     const materialsAPI = new MaterialsApi(token)
-
+    const spinner = ora('Fetching courses...').start();
     const courses = await materialsAPI.getCourses()
+    spinner.stop()
+    spinner.clear()
     const courseNameChosen = await pickCourse(courses.data as Course[])
     const course = courses.data.find(x => x.title === courseNameChosen.course) as Course
-    console.log(chalk.yellow("Fetching course materials..."))
+    const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
+    spinner2.stop()
+    spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
     let downloadedFiles = 0;
     for (let i = 0; i < nonLinkResources.length; i++) {
@@ -72,7 +80,11 @@ const run = async () => {
             console.log(chalk.yellow(nonLinkResources[i].title  + " already downloaded"))
         }
     }
-    console.log(chalk.greenBright(`Downloaded ${downloadedFiles} resources!`))
+    if(downloadedFiles != 0) {
+        console.log(chalk.greenBright(`Downloaded ${downloadedFiles} resources!`))
+    } else {
+        console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
+    }
 };
 
 run();

@@ -7,4 +7,5 @@ export function startUp() {
             figlet.textSync('Materials CLI')
         )
     );
+    console.log(chalk.green("Welcome to Materials CLI!"))
 }
