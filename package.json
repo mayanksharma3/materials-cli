@@ -1,6 +1,6 @@
 {
   "name": "materials-cli",
-  "version": "1.0.14",
+  "version": "1.0.17",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
   "repository": {
@@ -39,7 +39,8 @@
     "keytar": "^7.3.0",
     "listr": "^0.14.3",
     "ora": "^5.2.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "update-notifier": "^5.0.1"
   },
   "devDependencies": {
     "tslint": "^6.1.3",
