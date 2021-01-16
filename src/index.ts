@@ -72,16 +72,14 @@ const run = async () => {
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
     let downloadedFiles = 0;
     for (let i = 0; i < nonLinkResources.length; i++) {
-        const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], i, conf.get("folderPath").folderPath, course.title)
+        const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, conf.get("folderPath").folderPath, course.title)
         if(downloaded) {
             downloadedFiles++;
             console.log(chalk.greenBright("Downloaded " + nonLinkResources[i].title + "!"))
-        } else {
-            console.log(chalk.yellow(nonLinkResources[i].title  + " already downloaded"))
         }
     }
     if(downloadedFiles != 0) {
-        console.log(chalk.greenBright(`Downloaded ${downloadedFiles} resources!`))
+        console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
     } else {
         console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
     }

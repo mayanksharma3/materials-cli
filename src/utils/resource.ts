@@ -4,4 +4,5 @@ export interface Resource{
     course: string;
     year: string;
     title: string;
+    index: number;
 }
