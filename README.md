@@ -16,7 +16,7 @@ Pulls all the latest resources from your course into your folder, pulling only t
 
 ### Credentials
 
-Credentials are stored in the OS's keychain and retreived on every call to `materials`.
+Credentials are stored in the OS's keychain and retrieved on every call to `materials`.
 
 The credentials are never sent to anywhere other than `https://materials.doc.ic.ac.uk` and `https://api-materials.doc.ic.ac.uk`.
 
