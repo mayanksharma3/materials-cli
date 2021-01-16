@@ -28,7 +28,7 @@ To clear configuration just type: `materials clean`
 
 ## TODO
 
-Currently, this uses a mix of the current materials page (https://materials.doc.ic.ac.uk) and the new API (https://materials-api.doc.ic.ac.uk).
+Currently, this uses a mix of the current materials page (https://materials.doc.ic.ac.uk) and the new API (https://api-materials.doc.ic.ac.uk).
 
 The new API is slow to fetch resources, and the `/file` endpoint doesn't seem to work so that's why the old version is used for file fetching.
 
