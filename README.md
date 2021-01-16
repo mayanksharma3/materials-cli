@@ -8,7 +8,14 @@ Pulls all the latest resources from your course into your folder, pulling only t
 
 ## Installation
 
+### Ubuntu Prerequisites
+
+`sudo apt-get install libsecret-1-dev gnome-keyring`
+
+### Package Installation
+
 `npm install -g materials-cli`
+
 
 ## Usage
 
@@ -38,4 +45,4 @@ When the new API is ready to serve files, the legacy method should be removed.
 2. Auto-calculate year (currently hardcoded to `2021`)
 3. Add "favourite" courses to pull all latest content from all subscribed courses
 4. Find way to schedule pulling of files in the mornings
-5. Test on Linux and Windows (paths will need to be updated for Windows)
+5. Test on Linux and Windows
