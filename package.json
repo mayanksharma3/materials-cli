@@ -1,6 +1,6 @@
 {
   "name": "materials-cli",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
   "repository": {
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "tsc && ./dist/index.js",
+    "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mayank Sharma <mayank.sharma.uk@gmail.com>",

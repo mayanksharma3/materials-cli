@@ -1,5 +1,6 @@
 import axios, {AxiosRequestConfig} from "axios";
 import {Credentials, Token} from "../utils/credentials";
+import {year} from "../utils/config";
 
 class MaterialsApi {
 
@@ -17,7 +18,7 @@ class MaterialsApi {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             },
-            url: this.baseURL + "/courses/2021"
+            url: this.baseURL + "/courses/" + year()
         }
         return axios.request(config)
     }
@@ -28,7 +29,7 @@ class MaterialsApi {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             },
-            url: this.baseURL + "/resources?year=2021&course=" + courseCode
+            url: this.baseURL + `/resources?year=${year()}&course=` + courseCode
         }
         return axios.request(config)
     }

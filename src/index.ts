@@ -9,7 +9,7 @@ import {Course} from "./utils/course";
 import chalk from "chalk";
 import {Resource} from "./utils/resource";
 import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
-import {id} from "./utils/config";
+import {id, year} from "./utils/config";
 import {deleteCredentials} from "./utils/credentials";
 import ora from "ora";
 import Listr from "listr";
