@@ -1,13 +1,11 @@
 import inquirer from "inquirer";
 import {testAuth} from "./materials-api";
+import keytar from "keytar";
 import chalk from "chalk";
 import Fuse from 'fuse.js'
 import {Course} from "../utils/course";
-import {CredentialsAndToken} from "../utils/credentials";
 
-
-
-export async function askCredentials(): Promise<CredentialsAndToken> {
+export async function askCredentials(): Promise<string> {
     const questions = [
         {
             name: 'username',
@@ -37,8 +35,9 @@ export async function askCredentials(): Promise<CredentialsAndToken> {
     const response = await inquirer.prompt(questions);
     const token = await testAuth(response);
     if (token) {
+        await keytar.setPassword("materials-cli", response.username, response.password)
         console.log(chalk.greenBright("Successfully authenticated!"))
-        return {token: token, username: response.username, password: response.password};
+        return token;
     } else {
         console.log(chalk.redBright("Incorrect username or password, please try again!"))
         return askCredentials()
