@@ -103,7 +103,7 @@ const run = async () => {
             console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
         }
         const openFolder = await promptOpenFolder()
-        if(openFolder) {
+        if(openFolder.openFolder) {
             await open(path.join(folderPath, course.title))
         }
     });
