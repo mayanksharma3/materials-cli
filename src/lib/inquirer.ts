@@ -98,3 +98,15 @@ export async function setFolder() {
     ];
     return inquirer.prompt(questions);
 }
+
+export async function promptOpenFolder() {
+    const questions = [
+        {
+            name: 'openFolder',
+            type: 'confirm',
+            default: true,
+            message: 'Open Folder?'
+        }
+    ];
+    return inquirer.prompt(questions);
+}

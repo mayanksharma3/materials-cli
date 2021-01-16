@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {askCredentials, pickCourse, setFolder} from "./lib/inquirer";
+import {askCredentials, pickCourse, promptOpenFolder, setFolder} from "./lib/inquirer";
 import keytar from "keytar";
 import Configstore from "configstore";
 import MaterialsApi, {testAuth} from "./lib/materials-api";
@@ -12,7 +12,9 @@ import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
 import {id, year} from "./utils/config";
 import {deleteCredentials} from "./utils/credentials";
 import ora from "ora";
+import open from "open";
 import Listr from "listr";
+import * as path from "path";
 
 const updateNotifier = require('update-notifier');
 const pkg = require('../package.json');
@@ -73,6 +75,7 @@ const run = async () => {
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
+    let folderPath = conf.get("folderPath").folderPath;
     spinner2.stop()
     spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
@@ -82,7 +85,7 @@ const run = async () => {
         tasks.push({
             title: "Downloading " + nonLinkResources[i].title,
             task: async () => {
-                const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, conf.get("folderPath").folderPath, course.title)
+                const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, folderPath, course.title)
                 if(downloaded) {
                     downloadedFiles++;
                 }
@@ -93,13 +96,18 @@ const run = async () => {
     const listr = new Listr(tasks, {concurrent: true})
     listr.run().catch(err => {
         console.error(err);
-    }).then(() => {
+    }).then(async () => {
         if(downloadedFiles != 0) {
             console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
         } else {
             console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
         }
+        const openFolder = await promptOpenFolder()
+        if(openFolder) {
+            await open(path.join(folderPath, course.title))
+        }
     });
+
 };
 
 run();
