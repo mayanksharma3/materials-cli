@@ -12,6 +12,7 @@ import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
 import {id} from "./utils/config";
 import {deleteCredentials} from "./utils/credentials";
 import ora from "ora";
+import Listr from "listr";
 
 const run = async () => {
     startUp()
@@ -71,18 +72,29 @@ const run = async () => {
     spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
     let downloadedFiles = 0;
+    const tasks = []
     for (let i = 0; i < nonLinkResources.length; i++) {
-        const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, conf.get("folderPath").folderPath, course.title)
-        if(downloaded) {
-            downloadedFiles++;
-            console.log(chalk.greenBright("Downloaded " + nonLinkResources[i].title + "!"))
+        tasks.push({
+            title: "Downloading " + nonLinkResources[i].title,
+            task: async () => {
+                const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, conf.get("folderPath").folderPath, course.title)
+                if(downloaded) {
+                    downloadedFiles++;
+                }
+            }
+        })
+    }
+
+    const listr = new Listr(tasks, {concurrent: true})
+    listr.run().catch(err => {
+        console.error(err);
+    }).then(() => {
+        if(downloadedFiles != 0) {
+            console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
+        } else {
+            console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
         }
-    }
-    if(downloadedFiles != 0) {
-        console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
-    } else {
-        console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
-    }
+    });
 };
 
 run();

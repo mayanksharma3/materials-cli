@@ -24,11 +24,18 @@ class MaterialsLegacy {
                 headers: {"Cookie": this.cookie},
                 responseType: "stream"
             }).then((response) => {
-                response.data.pipe(fs.createWriteStream(filePath));
-                return true
+                const stream = response.data.pipe(fs.createWriteStream(filePath));
+                return new Promise((resolve, reject) => {
+                    stream.on("finish", () => {
+                        return resolve(true)
+                    })
+                })
+
             })
+        } else {
+            return false
         }
-        return false
+
     }
 
 }
