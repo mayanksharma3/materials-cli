@@ -10,7 +10,7 @@ import MaterialsLegacy from "./lib/materials-legacy";
 import Keystore from "./lib/keystore";
 import ConfigStore from "./lib/configstore";
 import ConcurrentDownloader from "./lib/concurrent-downloader";
-import {startUp} from "./utils/startup";
+import {intro, startUp} from "./utils/startup";
 import {Course} from "./utils/course";
 import {Resource} from "./utils/resource";
 import {CredentialsAndToken} from "./utils/credentials";
@@ -49,6 +49,7 @@ const run = async () => {
     let tokenAndCredentials: CredentialsAndToken
 
     if (!existingCredentials) {
+        intro()
         tokenAndCredentials = await askCredentials();
         await keystore.setCredentials(tokenAndCredentials.credentials)
     } else {

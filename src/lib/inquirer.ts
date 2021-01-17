@@ -86,7 +86,7 @@ export async function setFolder() {
             name: 'folderPath',
             type: 'input',
             default: path.join(require("os").homedir(), "Documents", "Materials"),
-            message: 'Enter the path for saving all material:',
+            message: 'Enter the default path for saving all material:',
             validate: function (value) {
                 if (value.length) {
                     return true;
