@@ -4,14 +4,15 @@ import keytar from "keytar";
 import chalk from "chalk";
 import Fuse from 'fuse.js'
 import {Course} from "../utils/course";
+import {CredentialsAndToken} from "../utils/credentials";
 
-export async function askCredentials(): Promise<string> {
+export async function askCredentials(): Promise<CredentialsAndToken> {
     const questions = [
         {
             name: 'username',
             type: 'input',
             message: 'Enter your Imperial Shortcode:',
-            validate: function( value ) {
+            validate: function (value) {
                 if (value.length) {
                     return true;
                 } else {
@@ -23,7 +24,7 @@ export async function askCredentials(): Promise<string> {
             name: 'password',
             type: 'password',
             message: 'Enter your password:',
-            validate: function(value) {
+            validate: function (value) {
                 if (value.length) {
                     return true;
                 } else {
@@ -35,9 +36,8 @@ export async function askCredentials(): Promise<string> {
     const response = await inquirer.prompt(questions);
     const token = await testAuth(response);
     if (token) {
-        await keytar.setPassword("materials-cli", response.username, response.password)
         console.log(chalk.greenBright("Successfully authenticated!"))
-        return token;
+        return {token: token, credentials: response};
     } else {
         console.log(chalk.redBright("Incorrect username or password, please try again!"))
         return askCredentials()
@@ -54,7 +54,7 @@ export async function pickCourse(list: Course[]) {
             type: 'autocomplete',
             message: 'Pick course:',
             source: (_, input) => {
-                if(input) {
+                if (input) {
                     const options = {
                         includeScore: true,
                         keys: ['title', 'code']
@@ -66,7 +66,7 @@ export async function pickCourse(list: Course[]) {
                     return list.map(x => x.title)
                 }
             },
-            validate: function(value) {
+            validate: function (value) {
                 const course = list.find(x => x.title === value.name) as Course
                 if (course.has_materials) {
                     return true;
@@ -87,7 +87,7 @@ export async function setFolder() {
             type: 'input',
             default: require("os").homedir() + "/Documents/Materials",
             message: 'Enter the path for saving all material:',
-            validate: function( value ) {
+            validate: function (value) {
                 if (value.length) {
                     return true;
                 } else {

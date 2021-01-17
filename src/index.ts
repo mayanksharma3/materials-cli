@@ -1,23 +1,21 @@
 #!/usr/bin/env node
 
-import {askCredentials, pickCourse, promptOpenFolder, setFolder} from "./lib/inquirer";
-import keytar from "keytar";
-import Configstore from "configstore";
+import {askCredentials, pickCourse, setFolder} from "./lib/inquirer";
 import MaterialsApi, {testAuth} from "./lib/materials-api";
 import {startUp} from "./utils/startup";
 import {Course} from "./utils/course";
 import chalk from "chalk";
 import {Resource} from "./utils/resource";
-import MaterialsLegacy, {authLegacy} from "./lib/materials-legacy";
-import {id, year} from "./utils/config";
-import {deleteCredentials} from "./utils/credentials";
+import MaterialsLegacy from "./lib/materials-legacy";
+import {id} from "./utils/config";
+import {CredentialsAndToken} from "./utils/credentials";
 import ora from "ora";
-import open from "open";
-import Listr from "listr";
-import * as path from "path";
-import fs from "fs";
 import {ArgumentParser} from "argparse";
-const updateNotifier = require('update-notifier');
+import Keystore from "./lib/keystore";
+import ConfigStore from "./lib/configstore";
+import updateNotifier from "update-notifier";
+import ConcurrentDownloader from "./lib/concurrent-downloader";
+
 const pkg = require('../package.json');
 const version = pkg.version;
 const notifier = updateNotifier({pkg, updateCheckInterval: 0});
@@ -35,52 +33,50 @@ const argv = parser.parse_args();
 const run = async () => {
     startUp(pkg.version)
     notifier.notify();
-
-    const conf = new Configstore(id);
+    const keystore = new Keystore();
+    const conf = new ConfigStore(id);
 
     if (argv.clean) {
-        await deleteCredentials()
-        conf.clear()
+        await keystore.deleteCredentials()
+        conf.clearConfig()
         console.log(chalk.greenBright("Configuration cleared!"))
         return;
     }
 
-    let existingCredentials = await keytar.findCredentials(id)
+    let existingCredentials = await keystore.getCredentials()
 
-    let token = ""
-    if (existingCredentials.length == 0) {
-        token = await askCredentials();
+    let tokenAndCredentials: CredentialsAndToken
+
+    if (!existingCredentials) {
+        tokenAndCredentials = await askCredentials();
+        await keystore.setCredentials(tokenAndCredentials.credentials)
     } else {
         const spinner = ora('Signing into Materials...').start();
-        const existingCredential = {username: existingCredentials[0].account, password: existingCredentials[0].password}
-        const test = await testAuth(existingCredential)
-        if (!test) {
-            token = await askCredentials()
+        const newToken = await testAuth(existingCredentials)
+        if (!newToken) {
+            tokenAndCredentials = await askCredentials();
+            await keystore.setCredentials(tokenAndCredentials.credentials)
         } else {
-            token = test
+            tokenAndCredentials = {credentials: existingCredentials, token: newToken}
         }
         spinner.stop()
         spinner.clear()
         console.log(chalk.greenBright("✔ Successfully authenticated"))
     }
-    existingCredentials = await keytar.findCredentials(id)
 
-    const cookie = await authLegacy({
-        username: existingCredentials[0].account,
-        password: existingCredentials[0].password
-    })
-    const materialsLegacy = new MaterialsLegacy(cookie)
+    const materialsLegacy = new MaterialsLegacy()
+    await materialsLegacy.authLegacy(tokenAndCredentials.credentials)
 
-    if (!conf.has("folderPath")) {
+    if (!conf.getFolderPath()) {
         const folderPath = await setFolder()
-        conf.set("folderPath", folderPath)
+        conf.setFolderPath(folderPath)
     }
 
-    const materialsAPI = new MaterialsApi(token)
+    const materialsAPI = new MaterialsApi(tokenAndCredentials.token)
 
     // Successfully authenticated
 
-    const currentShortcuts: { [key: string]: Course } = conf.get("shortcuts") || {}
+    const currentShortcuts = conf.getShortcuts()
 
     let course: Course | undefined;
     const shortCutArg = argv.shortcut;
@@ -102,8 +98,7 @@ const run = async () => {
         }
         course = courses.data.find(x => x.title === courseNameChosen.course) as Course
         if (shortCutArg) {
-            currentShortcuts[shortCutArg] = course;
-            conf.set("shortcuts", currentShortcuts);
+            conf.setShortcuts(shortCutArg, course)
         }
     } else {
         console.log(chalk.blueBright(course.title))
@@ -112,46 +107,13 @@ const run = async () => {
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
-    let folderPath = conf.get("folderPath").folderPath;
+    let folderPath = conf.getFolderPath();
     spinner2.stop()
     spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
-    let downloadedFiles = 0;
-    const tasks = []
-    for (let i = 0; i < nonLinkResources.length; i++) {
-        let currentResource = nonLinkResources[i];
-        const filePath = path.join(folderPath, course.title, currentResource.category, currentResource.title)
-        if (!fs.existsSync(filePath)) {
-            tasks.push({
-                title: "Downloading " + currentResource.title,
-                task: async () => {
-                    const downloaded = await materialsLegacy.downloadFile(currentResource, currentResource.index, folderPath, course.title)
-                    if (downloaded) {
-                        downloadedFiles++;
-                    }
-                }
-            })
-        }
-
-    }
-    if (tasks.length !== 0) {
-        const listr = new Listr(tasks, {concurrent: true})
-        listr.run().catch(err => {
-            console.error(err);
-        }).then(async () => {
-            if (downloadedFiles != 0) {
-                console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
-                const openFolderResponse = await promptOpenFolder()
-                if (openFolderResponse.openFolder) {
-                    await open(path.join(folderPath, course.title))
-                }
-            }
-
-        });
-    } else {
-        console.log(chalk.greenBright("All resources already downloaded, no new to pull!"))
-    }
-
+    const concurrentDownloader = new ConcurrentDownloader(materialsLegacy, course.title, folderPath)
+    concurrentDownloader.scheduleDownloads(nonLinkResources)
+    await concurrentDownloader.executeDownloads()
 };
 
 run();

@@ -10,10 +10,6 @@ class MaterialsLegacy {
 
     cookie: Cookie;
 
-    constructor(cookie: Cookie) {
-        this.cookie = cookie;
-    }
-
     async downloadFile(resource: Resource, index: number, folderPath: string, courseName: string) {
         const fullFolderPath = path.join(folderPath, courseName, resource.category);
         const filePath = path.join(folderPath, courseName, resource.category, resource.title)
@@ -33,26 +29,25 @@ class MaterialsLegacy {
         })
     }
 
-}
-
-export function authLegacy(credentials: Credentials): Promise<string> {
-    const options = {
-        'method': 'POST',
-        'url': legacyBaseURL,
-        'headers': {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        form: {
-            'username': credentials.username,
-            'password': credentials.password
-        }
-    };
-    return new Promise((resolve, reject) => {
-        request(options, function (error, response) {
-            if (error) reject();
-            resolve(response.headers['set-cookie'][0]);
+    async authLegacy(credentials: Credentials) {
+        const options = {
+            'method': 'POST',
+            'url': legacyBaseURL,
+            'headers': {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            form: {
+                'username': credentials.username,
+                'password': credentials.password
+            }
+        };
+        this.cookie = await new Promise((resolve, reject) => {
+            request(options, function (error, response) {
+                if (error) reject();
+                resolve(response.headers['set-cookie'][0]);
+            });
         });
-    })
+    }
 
 }
 
