@@ -28,7 +28,7 @@ const parser = new ArgumentParser({
 
 parser.add_argument('shortcut', {nargs: "?", help: "Shortcut to course"})
 parser.add_argument('-v', '--version', {action: 'version', version});
-parser.add_argument('-c', '--clean', {action: 'store_true'});
+parser.add_argument('-c', '--clean', {action: 'store_true', help: "Clean configurations"});
 
 const argv = parser.parse_args();
 
