@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
+import ora from "ora";
+import chalk from "chalk";
+import updateNotifier from "update-notifier";
+import {ArgumentParser} from "argparse";
 import {askCredentials, pickCourse, setFolder} from "./lib/inquirer";
 import MaterialsApi, {testAuth} from "./lib/materials-api";
-import {startUp} from "./utils/startup";
-import {Course} from "./utils/course";
-import chalk from "chalk";
-import {Resource} from "./utils/resource";
 import MaterialsLegacy from "./lib/materials-legacy";
-import {id} from "./utils/config";
-import {CredentialsAndToken} from "./utils/credentials";
-import ora from "ora";
-import {ArgumentParser} from "argparse";
 import Keystore from "./lib/keystore";
 import ConfigStore from "./lib/configstore";
-import updateNotifier from "update-notifier";
 import ConcurrentDownloader from "./lib/concurrent-downloader";
+import {startUp} from "./utils/startup";
+import {Course} from "./utils/course";
+import {Resource} from "./utils/resource";
+import {CredentialsAndToken} from "./utils/credentials";
+import {id} from "./utils/config";
 
 const pkg = require('../package.json');
 const version = pkg.version;
