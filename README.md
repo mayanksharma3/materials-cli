@@ -46,6 +46,16 @@ optional arguments:
 You can set shortcuts to courses by using the `shortcut` argument. If no shortcut is found, selecting the course will assign
 the shortcut to the chosen course. The next time you run `materials` it will automatically fetch courses for the course chosen before.
 
+Example:
+
+Using `CV` shortcut for first time:
+
+![Shortcut Example 1](media/shortcut1.png)
+
+Using `CV` example again:
+
+![Shortcut Example 2](media/shortcut2.png)
+
 ### Credentials
 
 Credentials are stored in the OS's keychain and retrieved on every call to `materials`.
