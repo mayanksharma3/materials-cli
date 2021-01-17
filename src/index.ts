@@ -15,10 +15,22 @@ import ora from "ora";
 import open from "open";
 import Listr from "listr";
 import * as path from "path";
-
+import fs from "fs";
+import {ArgumentParser} from "argparse";
 const updateNotifier = require('update-notifier');
 const pkg = require('../package.json');
+const version = pkg.version;
 const notifier = updateNotifier({pkg, updateCheckInterval: 0});
+
+const parser = new ArgumentParser({
+    description: 'Materials CLI Tool'
+});
+
+parser.add_argument('shortcut', {nargs: "?", help: "Shortcut to course"})
+parser.add_argument('-v', '--version', {action: 'version', version});
+parser.add_argument('-c', '--clean', {action: 'store_true'});
+
+const argv = parser.parse_args();
 
 const run = async () => {
     startUp(pkg.version)
@@ -26,13 +38,12 @@ const run = async () => {
 
     const conf = new Configstore(id);
 
-    if (process.argv.includes("clean")) {
+    if (argv.clean) {
         await deleteCredentials()
         conf.clear()
         console.log(chalk.greenBright("Configuration cleared!"))
         return;
     }
-
 
     let existingCredentials = await keytar.findCredentials(id)
 
@@ -66,12 +77,38 @@ const run = async () => {
     }
 
     const materialsAPI = new MaterialsApi(token)
-    const spinner = ora('Fetching courses...').start();
-    const courses = await materialsAPI.getCourses()
-    spinner.stop()
-    spinner.clear()
-    const courseNameChosen = await pickCourse(courses.data as Course[])
-    const course = courses.data.find(x => x.title === courseNameChosen.course) as Course
+
+    // Successfully authenticated
+
+    const currentShortcuts: { [key: string]: Course } = conf.get("shortcuts") || {}
+
+    let course: Course | undefined;
+    const shortCutArg = argv.shortcut;
+    if (shortCutArg) {
+        course = currentShortcuts[shortCutArg];
+    }
+
+    if (!course) {
+        const spinner = ora('Fetching courses...').start();
+        const courses = await materialsAPI.getCourses()
+        spinner.stop()
+        spinner.clear()
+        if (shortCutArg) {
+            console.log(chalk.yellow(`No course found for shortcut ${shortCutArg}, assign one below:`))
+        }
+        const courseNameChosen = await pickCourse(courses.data as Course[])
+        if (shortCutArg) {
+            console.log(chalk.yellow(`Shortcut ${shortCutArg}, assigned to ${courseNameChosen.course}!`))
+        }
+        course = courses.data.find(x => x.title === courseNameChosen.course) as Course
+        if (shortCutArg) {
+            currentShortcuts[shortCutArg] = course;
+            conf.set("shortcuts", currentShortcuts);
+        }
+    } else {
+        console.log(chalk.blueBright(course.title))
+    }
+
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
@@ -82,31 +119,38 @@ const run = async () => {
     let downloadedFiles = 0;
     const tasks = []
     for (let i = 0; i < nonLinkResources.length; i++) {
-        tasks.push({
-            title: "Downloading " + nonLinkResources[i].title,
-            task: async () => {
-                const downloaded = await materialsLegacy.downloadFile(nonLinkResources[i], nonLinkResources[i].index, folderPath, course.title)
-                if(downloaded) {
-                    downloadedFiles++;
+        let currentResource = nonLinkResources[i];
+        const filePath = path.join(folderPath, course.title, currentResource.category, currentResource.title)
+        if (!fs.existsSync(filePath)) {
+            tasks.push({
+                title: "Downloading " + currentResource.title,
+                task: async () => {
+                    const downloaded = await materialsLegacy.downloadFile(currentResource, currentResource.index, folderPath, course.title)
+                    if (downloaded) {
+                        downloadedFiles++;
+                    }
+                }
+            })
+        }
+
+    }
+    if (tasks.length !== 0) {
+        const listr = new Listr(tasks, {concurrent: true})
+        listr.run().catch(err => {
+            console.error(err);
+        }).then(async () => {
+            if (downloadedFiles != 0) {
+                console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
+                const openFolderResponse = await promptOpenFolder()
+                if (openFolderResponse.openFolder) {
+                    await open(path.join(folderPath, course.title))
                 }
             }
-        })
-    }
 
-    const listr = new Listr(tasks, {concurrent: true})
-    listr.run().catch(err => {
-        console.error(err);
-    }).then(async () => {
-        if(downloadedFiles != 0) {
-            console.log(chalk.greenBright(`Downloaded ${downloadedFiles} new resources!`))
-        } else {
-            console.log(chalk.greenBright("All resources downloaded, no new to pull!"))
-        }
-        const openFolder = await promptOpenFolder()
-        if(openFolder.openFolder) {
-            await open(path.join(folderPath, course.title))
-        }
-    });
+        });
+    } else {
+        console.log(chalk.greenBright("All resources already downloaded, no new to pull!"))
+    }
 
 };
 

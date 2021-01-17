@@ -1,9 +1,13 @@
 {
   "name": "materials-cli",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
-  "keywords": ["imperial", "doc", "materials"],
+  "keywords": [
+    "imperial",
+    "doc",
+    "materials"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/mayanksharma3/materials-cli.git"
@@ -19,6 +23,7 @@
   "author": "Mayank Sharma <mayank.sharma.uk@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/argparse": "^2.0.5",
     "@types/clear": "^0.1.1",
     "@types/clui": "^0.3.0",
     "@types/configstore": "^4.0.0",
@@ -26,6 +31,7 @@
     "@types/inquirer": "^7.3.1",
     "@types/listr": "^0.14.2",
     "@types/request": "^2.48.5",
+    "argparse": "^2.0.1",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "clear": "^0.1.0",

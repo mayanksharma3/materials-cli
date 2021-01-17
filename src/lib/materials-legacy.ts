@@ -16,26 +16,21 @@ class MaterialsLegacy {
 
     async downloadFile(resource: Resource, index: number, folderPath: string, courseName: string) {
         const fullFolderPath = path.join(folderPath, courseName, resource.category);
-        fs.mkdirSync(fullFolderPath, {recursive: true});
         const filePath = path.join(folderPath, courseName, resource.category, resource.title)
-        if (!fs.existsSync(filePath)) {
-            const encodedCategory = encodeURIComponent(resource.category)
-            return axios.get(`https://materials.doc.ic.ac.uk/view/${resource.year}/${resource.course}/${encodedCategory}/${index}`, {
-                headers: {"Cookie": this.cookie},
-                responseType: "stream"
-            }).then((response) => {
-                const stream = response.data.pipe(fs.createWriteStream(filePath));
-                return new Promise((resolve, reject) => {
-                    stream.on("finish", () => {
-                        return resolve(true)
-                    })
+        fs.mkdirSync(fullFolderPath, {recursive: true});
+        const encodedCategory = encodeURIComponent(resource.category)
+        return axios.get(`https://materials.doc.ic.ac.uk/view/${resource.year}/${resource.course}/${encodedCategory}/${index}`, {
+            headers: {"Cookie": this.cookie},
+            responseType: "stream"
+        }).then((response) => {
+            const stream = response.data.pipe(fs.createWriteStream(filePath));
+            return new Promise((resolve, reject) => {
+                stream.on("finish", () => {
+                    return resolve(true)
                 })
-
             })
-        } else {
-            return false
-        }
 
+        })
     }
 
 }

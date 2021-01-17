@@ -22,7 +22,29 @@ Pulls all the latest resources from your course into your folder, pulling only t
 
 ## Usage
 
-`materials`
+Type `materials` in the terminal to access the CLI.
+
+Full options: 
+
+```
+usage: materials [-h] [-v] [-c] [shortcut]
+
+Materials CLI Tool
+
+positional arguments:
+  shortcut       Shortcut to course
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -v, --version  show program's version number and exit
+  -c, --clean
+
+```
+
+### Shortcuts
+
+You can set shortcuts to courses by using the `shortcut` argument. If no shortcut is found, selecting the course will assign
+the shortcut to the chosen course. The next time you run `materials` it will automatically fetch courses for the course chosen before.
 
 ### Credentials
 
