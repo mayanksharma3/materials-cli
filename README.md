@@ -17,9 +17,15 @@ Pulls all the latest resources from your course into your folder, pulling only t
 
 ## Installation
 
-### Ubuntu Prerequisites
+### Prerequisites (Only Linux)
+
+#### Ubuntu
 
 `sudo apt-get install libsecret-1-dev gnome-keyring`
+
+#### Other Linux Distributions
+
+Please check the documentation for [keytar](https://www.npmjs.com/package/keytar) to download them
 
 ### Package Installation
 
