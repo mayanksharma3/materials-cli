@@ -7,6 +7,12 @@ CLI for Imperial's Department of Computing Materials Page.
 
 Pulls all the latest resources from your course into your folder, pulling only the ones you haven't got in your folder.
 
+*Features: *
+1. Auto download resources for courses from terminal
+2. Auto login (after first call) to quickly access resources
+3. Only pulls new resources, so you don't need to find which ones are new
+4. Shortcuts to quickly access your main courses
+
 ![CLI demo](media/demo.gif)
 
 ## Installation
