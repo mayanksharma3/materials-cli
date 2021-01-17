@@ -1,11 +1,10 @@
 import axios, {AxiosRequestConfig} from "axios";
 import {Credentials, Token} from "../utils/credentials";
-import {year} from "../utils/config";
+import {baseURL, year} from "../utils/config";
 
 class MaterialsApi {
 
-    baseURL = "https://api-materials.doc.ic.ac.uk"
-
+    baseURL = baseURL
     token: Token;
 
     constructor(token: Token) {
@@ -13,36 +12,25 @@ class MaterialsApi {
     }
 
     async getCourses() {
-        const config: AxiosRequestConfig = {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${this.token}`
-            },
-            url: this.baseURL + "/courses/" + year()
-        }
-        return axios.request(config)
+        return axios.request(this.buildAxiosConfig("/courses/" + year()))
     }
 
     async getCourseResources(courseCode: string) {
-        const config: AxiosRequestConfig = {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${this.token}`
-            },
-            url: this.baseURL + `/resources?year=${year()}&course=` + courseCode
-        }
-        return axios.request(config)
+        return axios.request(this.buildAxiosConfig(`/resources?year=${year()}&course=` + courseCode))
     }
 
     async getResource(resourceID: number) {
-        const config: AxiosRequestConfig = {
+        return axios.request(this.buildAxiosConfig("/resources/" + resourceID + "/file"))
+    }
+
+    private buildAxiosConfig(path: string): AxiosRequestConfig {
+        return {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${this.token}`
             },
-            url: this.baseURL + "/resources/" + resourceID + "/file"
+            url: this.baseURL + path
         }
-        return axios.request(config)
     }
 
 }

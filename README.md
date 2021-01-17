@@ -76,10 +76,6 @@ The credentials are never sent to anywhere other than `https://materials.doc.ic.
 
 The package [keytar](https://www.npmjs.com/package/keytar) is used for this. 
 
-### Clear config
-
-To clear configuration just type: `materials clean`
-
 ## TODO
 
 Currently, this uses a mix of the current materials page (https://materials.doc.ic.ac.uk) and the new API (https://api-materials.doc.ic.ac.uk).
