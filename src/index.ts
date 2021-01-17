@@ -27,6 +27,7 @@ const parser = new ArgumentParser({
 parser.add_argument('shortcut', {nargs: "?", help: "Shortcut to course"})
 parser.add_argument('-v', '--version', {action: 'version', version});
 parser.add_argument('-c', '--clean', {action: 'store_true', help: "Clean configurations"});
+parser.add_argument('-d', '--dir', {action: 'store_true', help: "Save folders in current directory instead"});
 
 const argv = parser.parse_args();
 
@@ -107,7 +108,7 @@ const run = async () => {
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
-    let folderPath = conf.getFolderPath();
+    let folderPath = argv.dir ? process.cwd() : conf.getFolderPath();
     spinner2.stop()
     spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))

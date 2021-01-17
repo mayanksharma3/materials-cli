@@ -1,10 +1,10 @@
 import inquirer from "inquirer";
 import {testAuth} from "./materials-api";
-import keytar from "keytar";
 import chalk from "chalk";
 import Fuse from 'fuse.js'
 import {Course} from "../utils/course";
 import {CredentialsAndToken} from "../utils/credentials";
+import * as path from "path";
 
 export async function askCredentials(): Promise<CredentialsAndToken> {
     const questions = [
@@ -85,7 +85,7 @@ export async function setFolder() {
         {
             name: 'folderPath',
             type: 'input',
-            default: require("os").homedir() + "/Documents/Materials",
+            default: path.join(require("os").homedir(), "Documents", "Materials"),
             message: 'Enter the path for saving all material:',
             validate: function (value) {
                 if (value.length) {

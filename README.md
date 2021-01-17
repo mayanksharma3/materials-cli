@@ -50,6 +50,7 @@ optional arguments:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
   -c, --clean
+  -d, --dir      Save folders in current directory instead
 
 ```
 
