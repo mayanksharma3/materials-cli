@@ -1,11 +1,12 @@
 import MaterialsLegacy from "./materials-legacy";
-import {Resource} from "../utils/resource";
+import {Resource, ResourceWithLink} from "../utils/resource";
 import path from "path";
 import fs from "fs";
 import Listr, {ListrTask} from "listr";
 import chalk from "chalk";
 import {promptOpenFolder} from "./inquirer";
 import open from "open";
+import {downloadURL} from "./link-downloader";
 
 class ConcurrentDownloader {
 
@@ -34,6 +35,21 @@ class ConcurrentDownloader {
                 })
             }
 
+        }
+    }
+
+    scheduleLinkDownloads(resources: ResourceWithLink[]) {
+        for(let i = 0; i < resources.length; i++) {
+            let currentResource = resources[i];
+            const filePath = path.join(this.folderPath, this.course, currentResource.category, currentResource.title)
+            if (!fs.existsSync(filePath)) {
+                this.tasks.push({
+                    title: "Downloading " + currentResource.title,
+                    task: async () => {
+                        await downloadURL(this.folderPath, this.course, currentResource)
+                    }
+                })
+            }
         }
     }
 

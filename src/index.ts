@@ -12,7 +12,7 @@ import ConfigStore from "./lib/configstore";
 import ConcurrentDownloader from "./lib/concurrent-downloader";
 import {intro, startUp} from "./utils/startup";
 import {Course} from "./utils/course";
-import {Resource} from "./utils/resource";
+import {Resource, ResourceWithLink} from "./utils/resource";
 import {CredentialsAndToken} from "./utils/credentials";
 import {id} from "./utils/config";
 
@@ -109,12 +109,14 @@ const run = async () => {
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
     const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
+    const pdfLinkResources = resourcesResult.data.filter(x => x.type == 'link' && x.path.endsWith(".pdf")) as ResourceWithLink[]
     let folderPath = argv.dir ? process.cwd() : conf.getFolderPath();
     spinner2.stop()
     spinner2.clear()
-    console.log(chalk.greenBright(`Found ${nonLinkResources.length} resources!`))
+    console.log(chalk.greenBright(`Found ${nonLinkResources.length + pdfLinkResources.length} resources!`))
     const concurrentDownloader = new ConcurrentDownloader(materialsLegacy, course.title, folderPath)
     concurrentDownloader.scheduleDownloads(nonLinkResources)
+    concurrentDownloader.scheduleLinkDownloads(pdfLinkResources)
     await concurrentDownloader.executeDownloads()
 };
 

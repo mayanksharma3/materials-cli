@@ -6,3 +6,7 @@ export interface Resource {
     title: string;
     index: number;
 }
+
+export interface ResourceWithLink extends Resource{
+    path: string;
+}

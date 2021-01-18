@@ -12,6 +12,7 @@ Pulls all the latest resources from your course into your folder, pulling only t
 2. Auto login (after first call) to quickly access resources
 3. Only pulls new resources, so you don't need to find which ones are new
 4. Shortcuts to quickly access your main courses
+5. Concurrent downloads of materials
 
 ![CLI demo](media/demo.gif)
 
