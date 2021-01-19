@@ -1,10 +1,10 @@
 import {Cookie, Credentials} from "../utils/credentials";
+import request from "request";
 import {legacyBaseURL} from "../utils/config";
 import axios from "axios";
 import * as fs from "fs";
 import {Resource} from "../utils/resource";
 import * as path from "path";
-import unirest from "unirest";
 
 class MaterialsLegacy {
 
@@ -30,17 +30,22 @@ class MaterialsLegacy {
     }
 
     async authLegacy(credentials: Credentials) {
+        const options = {
+            'method': 'POST',
+            'url': legacyBaseURL,
+            'headers': {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            form: {
+                'username': credentials.username,
+                'password': credentials.password
+            }
+        };
         this.cookie = await new Promise((resolve, reject) => {
-            unirest('POST', legacyBaseURL)
-                .headers({
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                })
-                .send('username=' + credentials.username)
-                .send('password=' + credentials.password)
-                .end(function (res) {
-                    if (res.error) throw new Error(res.error);
-                    resolve(res.headers['set-cookie'][0]);
-                });
+            request(options, function (error, response) {
+                if (error) reject();
+                resolve(response.headers['set-cookie'][0]);
+            });
         });
     }
 

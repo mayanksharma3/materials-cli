@@ -87,6 +87,7 @@ The new API is slow to fetch resources, and the `/file` endpoint doesn't seem to
 When the new API is ready to serve files, the legacy method should be removed.
 
 1. Remove old API method using session cookies
-2. Add "favourite" courses to pull all latest content from all subscribed courses
-3. Find way to schedule pulling of files in the mornings
-4. Test on Linux and Windows
+2. Add way to pull from multiple courses in one go (all shortcuts defined maybe?)
+3. Add fine-grained control of config of credentials and shortcuts
+4. Find way to schedule pulling of files in the mornings
+5. Test on different Linux distributions

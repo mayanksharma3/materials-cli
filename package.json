@@ -1,6 +1,6 @@
 {
   "name": "materials-cli",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "CLI for Imperial Materials",
   "main": "./dist/index.js",
   "keywords": [
@@ -45,7 +45,7 @@
     "listr": "^0.14.3",
     "open": "^7.3.1",
     "ora": "^5.2.0",
-    "unirest": "^0.6.0",
+    "request": "^2.88.2",
     "update-notifier": "^5.0.1"
   },
   "devDependencies": {
