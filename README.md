@@ -40,14 +40,20 @@ Type `materials` in the terminal to access the CLI.
 Full options:
 
 ```  
-usage: materials [-h] [-v] [-c] [shortcut]  
-  
-Materials CLI Tool  
-  
-positional arguments:  
- shortcut       Shortcut to course  
-optional arguments:  
- -h, --help     show this help message and exit -v, --version  show program's version number and exit -c, --clean -d, --dir      Save folders in current directory instead -a, --all      Download all shortcut courses one go
+usage: index.js [-h] [-v] [-c] [-d] [-a] [shortcut]
+
+Materials CLI Tool
+
+positional arguments:
+  shortcut       Shortcut to course
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -v, --version  show program's version number and exit
+  -c, --clean    Clean configurations
+  -d, --dir      Save folders in current directory instead
+  -a, --all      Download all shortcut courses one go
+
  ```  
 
 ### Shortcuts
