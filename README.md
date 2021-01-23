@@ -39,7 +39,7 @@ Type `materials` in the terminal to access the CLI.
 Full options:
 
 ```  
-usage: index.js [-h] [-v] [-c] [-d] [-a] [shortcut]
+usage: materials [-h] [-v] [-c] [-d] [-a] [shortcut]
 
 Materials CLI Tool
 
