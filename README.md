@@ -1,6 +1,6 @@
-# Materials CLI 
 
-![npm](https://img.shields.io/npm/v/materials-cli)
+# Materials CLI
+![npm](https://img.shields.io/npm/v/materials-cli)  
 ![NPM](https://img.shields.io/npm/l/materials-cli)
 
 CLI for Imperial's Department of Computing Materials Page.
@@ -37,27 +37,22 @@ Please check the documentation for [keytar](https://www.npmjs.com/package/keytar
 
 Type `materials` in the terminal to access the CLI.
 
-Full options: 
+Full options:
 
-```
-usage: materials [-h] [-v] [-c] [shortcut]
-
-Materials CLI Tool
-
-positional arguments:
-  shortcut       Shortcut to course
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --version  show program's version number and exit
-  -c, --clean
-  -d, --dir      Save folders in current directory instead
-
-```
+```  
+usage: materials [-h] [-v] [-c] [shortcut]  
+  
+Materials CLI Tool  
+  
+positional arguments:  
+ shortcut       Shortcut to course  
+optional arguments:  
+ -h, --help     show this help message and exit -v, --version  show program's version number and exit -c, --clean -d, --dir      Save folders in current directory instead -a, --all      Download all shortcut courses one go
+ ```  
 
 ### Shortcuts
 
-You can set shortcuts to courses by using the `shortcut` argument. If no shortcut is found, selecting the course will assign
+You can set shortcuts to courses by using the `shortcut` argument. If no shortcut is found, selecting the course will assign  
 the shortcut to the chosen course. The next time you run `materials` it will automatically fetch courses for the course chosen before.
 
 Example:
@@ -70,13 +65,15 @@ Using `CV` example again:
 
 ![Shortcut Example 2](media/shortcut2.png)
 
+**You can use -a or --all to download all the courses that have shortcuts in one go**
+
 ### Credentials
 
 Credentials are stored in the OS's keychain and retrieved on every call to `materials`.
 
 The credentials are never sent to anywhere other than `https://materials.doc.ic.ac.uk` and `https://api-materials.doc.ic.ac.uk`.
 
-The package [keytar](https://www.npmjs.com/package/keytar) is used for this. 
+The package [keytar](https://www.npmjs.com/package/keytar) is used for this.
 
 ## TODO
 
@@ -87,7 +84,6 @@ The new API is slow to fetch resources, and the `/file` endpoint doesn't seem to
 When the new API is ready to serve files, the legacy method should be removed.
 
 1. Remove old API method using session cookies
-2. Add way to pull from multiple courses in one go (all shortcuts defined maybe?)
-3. Add fine-grained control of config of credentials and shortcuts
-4. Find way to schedule pulling of files in the mornings
-5. Test on different Linux distributions
+2. Add fine-grained control of config of credentials and shortcuts
+3. Find way to schedule pulling of files in the mornings
+4. Test on different Linux distributions

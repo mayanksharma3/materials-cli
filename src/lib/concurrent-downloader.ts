@@ -53,7 +53,7 @@ class ConcurrentDownloader {
         }
     }
 
-    executeDownloads() {
+    executeDownloads(openFolder: boolean) {
         const numToDownload = this.tasks.length;
         if (numToDownload !== 0) {
             const listr = new Listr(this.tasks, {concurrent: true})
@@ -62,9 +62,11 @@ class ConcurrentDownloader {
             }).then(async () => {
                 if (numToDownload != 0) {
                     console.log(chalk.greenBright(`Downloaded ${numToDownload} new resources!`))
-                    const openFolderResponse = await promptOpenFolder()
-                    if (openFolderResponse.openFolder) {
-                        await open(path.join(this.folderPath, this.course))
+                    if(openFolder) {
+                        const openFolderResponse = await promptOpenFolder()
+                        if (openFolderResponse.openFolder) {
+                            await open(path.join(this.folderPath, this.course))
+                        }
                     }
                 }
             });

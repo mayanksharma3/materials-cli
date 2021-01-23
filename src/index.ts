@@ -28,6 +28,7 @@ parser.add_argument('shortcut', {nargs: "?", help: "Shortcut to course"})
 parser.add_argument('-v', '--version', {action: 'version', version});
 parser.add_argument('-c', '--clean', {action: 'store_true', help: "Clean configurations"});
 parser.add_argument('-d', '--dir', {action: 'store_true', help: "Save folders in current directory instead"});
+parser.add_argument('-a', '--all', {action: 'store_true', help: "Download all shortcut courses one go"});
 
 const argv = parser.parse_args();
 
@@ -86,6 +87,19 @@ const run = async () => {
         course = currentShortcuts[shortCutArg];
     }
 
+    if(argv.all) {
+        const shortcuts = Object.keys(currentShortcuts);
+        for (let i = 0; i < shortcuts.length; i++) {
+            let course = currentShortcuts[shortcuts[i]]
+            await downloadCourse(course, materialsAPI, shortCutArg, conf, materialsLegacy, false);
+        }
+    } else {
+        await downloadCourse(course, materialsAPI, shortCutArg, conf, materialsLegacy);
+    }
+
+};
+
+async function downloadCourse(course: Course, materialsAPI: MaterialsApi, shortCutArg, conf: ConfigStore, materialsLegacy: MaterialsLegacy, openFolder: boolean = true) {
     if (!course) {
         const spinner = ora('Fetching courses...').start();
         const courses = await materialsAPI.getCourses()
@@ -117,8 +131,8 @@ const run = async () => {
     const concurrentDownloader = new ConcurrentDownloader(materialsLegacy, course.title, folderPath)
     concurrentDownloader.scheduleDownloads(nonLinkResources)
     concurrentDownloader.scheduleLinkDownloads(pdfLinkResources)
-    await concurrentDownloader.executeDownloads()
-};
+    await concurrentDownloader.executeDownloads(openFolder)
+}
 
 run();
 
