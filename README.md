@@ -1,7 +1,6 @@
 
 # Materials CLI
-![npm](https://img.shields.io/npm/v/materials-cli)  
-![NPM](https://img.shields.io/npm/l/materials-cli)
+![npm](https://img.shields.io/npm/v/materials-cli) ![NPM](https://img.shields.io/npm/l/materials-cli)
 
 CLI for Imperial's Department of Computing Materials Page.
 
