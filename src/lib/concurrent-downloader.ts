@@ -41,7 +41,7 @@ class ConcurrentDownloader {
     scheduleLinkDownloads(resources: ResourceWithLink[]) {
         for(let i = 0; i < resources.length; i++) {
             let currentResource = resources[i];
-            const filePath = path.join(this.folderPath, this.course, currentResource.category, currentResource.title)
+            const filePath = path.join(this.folderPath, this.course, currentResource.category, currentResource.title + ".pdf")
             if (!fs.existsSync(filePath)) {
                 this.tasks.push({
                     title: "Downloading " + currentResource.title,

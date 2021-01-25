@@ -7,16 +7,17 @@ export function downloadURL(folderPath: string, courseName: string, resource: Re
     const fullFolderPath = path.join(folderPath, courseName, resource.category);
     fs.mkdirSync(fullFolderPath, {recursive: true});
     const filePath = path.join(folderPath, courseName, resource.category, resource.title + ".pdf")
-    console.log(filePath)
-    return axios.get(resource.path, {
-        responseType: "stream"
-    }).then((response) => {
-        const stream = response.data.pipe(fs.createWriteStream(filePath));
-        return new Promise((resolve, reject) => {
-            stream.on("finish", () => {
-                return resolve(true)
+    if (!fs.existsSync(filePath)) {
+        return axios.get(resource.path, {
+            responseType: "stream"
+        }).then((response) => {
+            const stream = response.data.pipe(fs.createWriteStream(filePath));
+            return new Promise((resolve, reject) => {
+                stream.on("finish", () => {
+                    return resolve(true)
+                })
             })
-        })
 
-    })
+        })
+    }
 }
