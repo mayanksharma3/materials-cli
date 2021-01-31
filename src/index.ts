@@ -29,7 +29,6 @@ parser.add_argument('-v', '--version', {action: 'version', version});
 parser.add_argument('-c', '--clean', {action: 'store_true', help: "Clean configurations"});
 parser.add_argument('-d', '--dir', {action: 'store_true', help: "Save folders in current directory instead"});
 parser.add_argument('-a', '--all', {action: 'store_true', help: "Download all shortcut courses one go"});
-
 const argv = parser.parse_args();
 
 const run = async () => {
