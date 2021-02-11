@@ -39,7 +39,7 @@ class ConcurrentDownloader {
     }
 
     scheduleLinkDownloads(resources: ResourceWithLink[]) {
-        for(let i = 0; i < resources.length; i++) {
+        for (let i = 0; i < resources.length; i++) {
             let currentResource = resources[i];
             const filePath = path.join(this.folderPath, this.course, currentResource.category, currentResource.title + ".pdf")
             if (!fs.existsSync(filePath)) {
@@ -53,25 +53,29 @@ class ConcurrentDownloader {
         }
     }
 
-    executeDownloads(openFolder: boolean) {
+    async executeDownloads(openFolder: boolean) {
         const numToDownload = this.tasks.length;
         if (numToDownload !== 0) {
             const listr = new Listr(this.tasks, {concurrent: true})
-            return listr.run().catch(err => {
+            return await listr.run().catch(err => {
                 console.error(err);
             }).then(async () => {
-                if (numToDownload != 0) {
-                    console.log(chalk.greenBright(`Downloaded ${numToDownload} new resources!`))
-                    if(openFolder) {
-                        const openFolderResponse = await promptOpenFolder()
-                        if (openFolderResponse.openFolder) {
-                            await open(path.join(this.folderPath, this.course))
-                        }
+                console.log(chalk.greenBright(`Downloaded ${numToDownload} new resources!`))
+                if (openFolder) {
+                    const openFolderResponse = await promptOpenFolder()
+                    if (openFolderResponse.openFolder) {
+                        await open(path.join(this.folderPath, this.course))
                     }
                 }
             });
         } else {
             console.log(chalk.greenBright("All resources already downloaded, no new to pull!"))
+            if (openFolder) {
+                const openFolderResponse = await promptOpenFolder()
+                if (openFolderResponse.openFolder) {
+                    await open(path.join(this.folderPath, this.course))
+                }
+            }
         }
     }
 

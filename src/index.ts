@@ -15,6 +15,7 @@ import {Course} from "./utils/course";
 import {Resource, ResourceWithLink} from "./utils/resource";
 import {CredentialsAndToken} from "./utils/credentials";
 import {id} from "./utils/config";
+import path from "path";
 
 const pkg = require('../package.json');
 const version = pkg.version;
@@ -121,7 +122,11 @@ async function downloadCourse(course: Course, materialsAPI: MaterialsApi, shortC
 
     const spinner2 = ora('Fetching course materials...').start();
     const resourcesResult = await materialsAPI.getCourseResources(course.code)
-    const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file') as Resource[]
+    // .map is a hack to ensure the extension is always added
+    const nonLinkResources = resourcesResult.data.filter(x => x.type == 'file').map(x => {
+        x.title = path.parse(x.title).name + path.parse(x.path).ext
+        return x
+    }) as Resource[]
     const pdfLinkResources = resourcesResult.data.filter(x => x.type == 'link' && x.path.endsWith(".pdf")) as ResourceWithLink[]
     let folderPath = argv.dir ? process.cwd() : conf.getFolderPath();
     spinner2.stop()
