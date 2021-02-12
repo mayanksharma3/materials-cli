@@ -55,6 +55,7 @@ optional arguments:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
   -c, --clean    Clean configurations
+  -o, --open     Open folder based off shortcut or selection
   -d, --dir      Save folders in current directory instead
   -a, --all      Download all shortcut courses one go
 
