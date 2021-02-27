@@ -1,4 +1,3 @@
-import MaterialsLegacy from "./materials-legacy";
 import {Resource, ResourceWithLink} from "../utils/resource";
 import path from "path";
 import fs from "fs";
@@ -7,17 +6,18 @@ import chalk from "chalk";
 import {promptOpenFolder} from "./inquirer";
 import open from "open";
 import {downloadURL} from "./link-downloader";
+import MaterialsApi from "./materials-api";
 
 class ConcurrentDownloader {
 
-    materialsLegacy: MaterialsLegacy;
+    materialsAPI: MaterialsApi;
     course: string;
     folderPath: string;
     tasks: ListrTask[] = [];
 
 
-    constructor(materialsLegacy: MaterialsLegacy, course: string, folderPath: string) {
-        this.materialsLegacy = materialsLegacy;
+    constructor(materialsLegacy: MaterialsApi, course: string, folderPath: string) {
+        this.materialsAPI = materialsLegacy;
         this.course = course;
         this.folderPath = folderPath;
     }
@@ -30,7 +30,7 @@ class ConcurrentDownloader {
                 this.tasks.push({
                     title: "Downloading " + currentResource.title,
                     task: async () => {
-                        await this.materialsLegacy.downloadFile(currentResource, currentResource.index, this.folderPath, this.course)
+                        await this.materialsAPI.downloadFile(currentResource, currentResource.index, this.folderPath, this.course)
                     }
                 })
             }

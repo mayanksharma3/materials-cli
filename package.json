@@ -44,7 +44,6 @@
     "listr": "^0.14.3",
     "open": "^7.3.1",
     "ora": "^5.2.0",
-    "request": "^2.88.2",
     "update-notifier": "^5.0.1"
   },
   "devDependencies": {

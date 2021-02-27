@@ -6,7 +6,6 @@ import updateNotifier from "update-notifier";
 import {ArgumentParser} from "argparse";
 import {askCredentials, pickCourse, setFolder} from "./lib/inquirer";
 import MaterialsApi, {testAuth} from "./lib/materials-api";
-import MaterialsLegacy from "./lib/materials-legacy";
 import Keystore from "./lib/keystore";
 import ConfigStore from "./lib/configstore";
 import ConcurrentDownloader from "./lib/concurrent-downloader";
@@ -69,9 +68,6 @@ const run = async () => {
         console.log(chalk.greenBright("✔ Successfully authenticated"))
     }
 
-    const materialsLegacy = new MaterialsLegacy()
-    await materialsLegacy.authLegacy(tokenAndCredentials.credentials)
-
     if (!conf.getFolderPath()) {
         const folderPath = await setFolder()
         conf.setFolderPath(folderPath)
@@ -93,15 +89,15 @@ const run = async () => {
         const shortcuts = Object.keys(currentShortcuts);
         for (let i = 0; i < shortcuts.length; i++) {
             let course = currentShortcuts[shortcuts[i]]
-            await downloadCourse(course, materialsAPI, shortCutArg, conf, materialsLegacy, argv.open, false);
+            await downloadCourse(course, materialsAPI, shortCutArg, conf, argv.open, false);
         }
     } else {
-        await downloadCourse(course, materialsAPI, shortCutArg, conf, materialsLegacy, argv.open);
+        await downloadCourse(course, materialsAPI, shortCutArg, conf, argv.open);
     }
 
 };
 
-async function downloadCourse(course: Course, materialsAPI: MaterialsApi, shortCutArg, conf: ConfigStore, materialsLegacy: MaterialsLegacy, argvOpenFolder: boolean, openFolder: boolean = true, ) {
+async function downloadCourse(course: Course, materialsAPI: MaterialsApi, shortCutArg, conf: ConfigStore, argvOpenFolder: boolean, openFolder: boolean = true, ) {
     let folderPath = argv.dir ? process.cwd() : conf.getFolderPath();
     if (!course) {
         const spinner = ora('Fetching courses...').start();
@@ -139,7 +135,7 @@ async function downloadCourse(course: Course, materialsAPI: MaterialsApi, shortC
     spinner2.stop()
     spinner2.clear()
     console.log(chalk.greenBright(`Found ${nonLinkResources.length + pdfLinkResources.length} resources!`))
-    const concurrentDownloader = new ConcurrentDownloader(materialsLegacy, course.title, folderPath)
+    const concurrentDownloader = new ConcurrentDownloader(materialsAPI, course.title, folderPath)
     concurrentDownloader.scheduleDownloads(nonLinkResources)
     concurrentDownloader.scheduleLinkDownloads(pdfLinkResources)
     await concurrentDownloader.executeDownloads(openFolder)
