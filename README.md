@@ -88,13 +88,6 @@ The package [keytar](https://www.npmjs.com/package/keytar) is used for this.
 
 ## TODO
 
-Currently, this uses a mix of the current materials page (https://materials.doc.ic.ac.uk) and the new API (https://api-materials.doc.ic.ac.uk).
-
-The new API is slow to fetch resources, and the `/file` endpoint doesn't seem to work so that's why the old version is used for file fetching.
-
-When the new API is ready to serve files, the legacy method should be removed.
-
-1. Remove old API method using session cookies
-2. Add fine-grained control of config of credentials and shortcuts
-3. Find way to schedule pulling of files in the mornings
-4. Test on different Linux distributions
+1. Add fine-grained control of config of credentials and shortcuts
+2. Find way to schedule pulling of files in the mornings
+3. Test on different Linux distributions
