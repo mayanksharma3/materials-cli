@@ -82,7 +82,7 @@ Using `CV` example again:
 
 Credentials are stored in the OS's keychain and retrieved on every call to `materials`.
 
-The credentials are never sent to anywhere other than `https://materials.doc.ic.ac.uk` and `https://api-materials.doc.ic.ac.uk`.
+The credentials are never sent to anywhere other than `https://api-materials.doc.ic.ac.uk`.
 
 The package [keytar](https://www.npmjs.com/package/keytar) is used for this.
 
